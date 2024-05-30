@@ -10,6 +10,7 @@ bevy_xr_utils = { git = "https://github.com/awtterpip/bevy_oxr", branch = "webxr
 bevy = "0.13.2"
 bevy_xpbd_3d = { version = "0.4.2" }
 bevy_embedded_assets = "0.10.2"
+random-number = "0.1.8"
 
 [lib]
 name = "bevy_vr_blocks"
