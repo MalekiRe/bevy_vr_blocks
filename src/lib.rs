@@ -108,7 +108,7 @@ fn play_sound_when_colliding(
                         AudioBundle {
                             source: asset_server.load("embedded://plastic-hit.ogg"),
                             settings: PlaybackSettings {
-                                mode: PlaybackMode::Once,
+                                mode: PlaybackMode::Despawn,
                                 volume: Volume::new(velocities.get(*e).unwrap().length() * 2.0),
                                 speed: 1.0,
                                 paused: false,
