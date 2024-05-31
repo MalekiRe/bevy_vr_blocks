@@ -4,9 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy_openxr = { git = "https://github.com/awtterpip/bevy_oxr", branch = "webxr-refactor"}
-bevy_xr = { git = "https://github.com/awtterpip/bevy_oxr", branch = "webxr-refactor"}
-bevy_xr_utils = { git = "https://github.com/awtterpip/bevy_oxr", branch = "webxr-refactor"}
+# the bevy_xr releated dependencies target the webxr-refactor branch
+bevy_openxr = { git = "https://github.com/awtterpip/bevy_oxr", rev = "72f2e71"}
+bevy_xr = { git = "https://github.com/awtterpip/bevy_oxr", rev = "72f2e71"}
+bevy_xr_utils = { git = "https://github.com/awtterpip/bevy_oxr",rev = "72f2e71"}
 bevy = "0.13.2"
 bevy_xpbd_3d = { version = "0.4.2" }
 bevy_embedded_assets = "0.10.2"
@@ -15,3 +16,4 @@ random-number = "0.1.8"
 [lib]
 name = "bevy_vr_blocks"
 crate-type = ["rlib", "cdylib"]
+
