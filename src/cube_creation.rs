@@ -4,7 +4,7 @@ use bevy::audio::{AudioBundle, AudioSink, PlaybackMode, PlaybackSettings, Volume
 use bevy::math::Vec3;
 use bevy::pbr::{PbrBundle, StandardMaterial};
 use bevy::prelude::{default, AudioSinkPlayback, Color, Commands, Cuboid, Deref, DerefMut, Entity, Gizmos, GlobalTransform, Local, Mesh, Query, Res, ResMut, Resource, Transform, With, Event, EventWriter, EventReader};
-use avian3d::prelude::{Collider, LinearVelocity, RigidBody};
+use avian3d::prelude::{Collider, LinearVelocity, RigidBody, SweepMode, SweptCcd};
 use bevy_mod_xr::hands::{HandBone, LeftHand, RightHand};
 use random_number::random;
 
@@ -185,6 +185,7 @@ fn draw_cube(
                         RigidBody::Dynamic,
                         LinearVelocity(Vec3::new(0.0, 0.0, 0.0)),
                         Collider::cuboid(transform.scale.x, transform.scale.y, transform.scale.z),
+                        SweptCcd::new_with_mode(SweepMode::NonLinear),
                     ));
                     audio_query.get(audio_thing.0).unwrap().set_volume(0.00);
                     current_cube_stage.take();
