@@ -4,11 +4,9 @@ use bevy::audio::{AudioBundle, AudioSink, PlaybackMode, PlaybackSettings, Volume
 use bevy::math::Vec3;
 use bevy::pbr::{PbrBundle, StandardMaterial};
 use bevy::prelude::{default, AudioSinkPlayback, Color, Commands, Cuboid, Deref, DerefMut, Entity, Gizmos, GlobalTransform, Local, Mesh, Query, Res, ResMut, Resource, Transform, With, Event, EventWriter, EventReader};
-use bevy_xpbd_3d::components::{LinearVelocity, RigidBody};
-use bevy_xpbd_3d::prelude::Collider;
-use bevy_xr::hands::{HandBone, LeftHand, RightHand};
+use avian3d::prelude::{Collider, LinearVelocity, RigidBody};
+use bevy_mod_xr::hands::{HandBone, LeftHand, RightHand};
 use random_number::random;
-use std::ops::Deref;
 
 pub struct CubeCreationPlugin;
 
@@ -23,7 +21,7 @@ impl Plugin for CubeCreationPlugin {
 fn setup_audio(mut commands: Commands, asset_server: Res<AssetServer>) {
     let creation_hum = commands
         .spawn(
-            (AudioBundle {
+            AudioBundle {
                 source: asset_server.load("embedded://hum.ogg"),
                 settings: PlaybackSettings {
                     mode: PlaybackMode::Loop,
@@ -33,7 +31,7 @@ fn setup_audio(mut commands: Commands, asset_server: Res<AssetServer>) {
                     spatial: false,
                     spatial_scale: None,
                 },
-            }),
+            },
         )
         .id();
     commands.insert_resource(CreationHum(creation_hum));
@@ -49,7 +47,7 @@ pub enum MakeCube {
 }
 
 fn create_cube(
-    mut audio_query: Query<&mut AudioSink>,
+    audio_query: Query<&mut AudioSink>,
     audio_thing: Res<CreationHum>,
     mut event_writer: EventWriter<MakeCube>,
     left_hand: Query<(&HandBone, &GlobalTransform), With<LeftHand>>,
@@ -113,7 +111,7 @@ fn draw_cube(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     audio_thing: Res<CreationHum>,
-    mut audio_query: Query<&mut AudioSink>,
+    audio_query: Query<&mut AudioSink>,
     mut make_cube: EventReader<MakeCube>,
     mut current_cube_stage: Local<Option<MakeCube>>,
 ) {
@@ -170,12 +168,12 @@ fn draw_cube(
 
             match cube_stage {
                 MakeCube::StartMaking => {
-                    gizmos.cuboid(transform, Color::rgb_u8(0, 255, 0));
+                    gizmos.cuboid(transform, Color::srgb_u8(0, 255, 0));
                 }
                 MakeCube::FinishMaking => {
                     let mut new_cube = commands.spawn((PbrBundle {
                         mesh: meshes.add(Cuboid::from_size(scale)),
-                        material: materials.add(Color::rgb_u8(
+                        material: materials.add(Color::srgb_u8(
                             random!(0..255),
                             random!(0..255),
                             random!(0..255),

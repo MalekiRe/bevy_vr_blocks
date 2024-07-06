@@ -1,15 +1,13 @@
 //! A simple 3D scene with light shining over a cube sitting on a plane
 
 use crate::cube_creation::CubeCreationPlugin;
-use bevy::asset::AssetLoader;
 use bevy::audio::{PlaybackMode, Volume};
 use bevy::prelude::*;
-use bevy::render::render_resource::AsBindGroup;
 use bevy_embedded_assets::EmbeddedAssetPlugin;
-use bevy_openxr::resources::OxrSession;
-use bevy_openxr::{add_xr_plugins, init::OxrInitPlugin, types::OxrExtensions};
-use bevy_xpbd_3d::prelude::*;
-use bevy_xr::hands::HandBoneRadius;
+use bevy_mod_openxr::{add_xr_plugins, init::OxrInitPlugin, types::OxrExtensions};
+use avian3d::prelude::*;
+use bevy_mod_openxr::session::OxrSession;
+use bevy_mod_xr::hands::HandBoneRadius;
 
 pub mod cube_creation;
 
@@ -66,7 +64,7 @@ fn setup(
         Collider::cuboid(1.0, 0.002, 1.0),
         PbrBundle {
             mesh: meshes.add(Plane3d::default().mesh().size(1.0, 1.0)),
-            material: materials.add(Color::rgb(0.3, 0.5, 0.3)),
+            material: materials.add(Color::srgb(0.3, 0.5, 0.3)),
             transform: Transform::from_translation(Vec3::new(0.0, 1.0, 0.0)),
             ..default()
         },
@@ -94,13 +92,13 @@ fn hand_collider(
 }
 
 fn play_sound_when_colliding(
-    query: Query<(&CollidingEntities)>,
+    query: Query<&CollidingEntities>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
     transforms: Query<&GlobalTransform>,
     velocities: Query<&LinearVelocity>,
 ) {
-    for (colliding_entities) in &query {
+    for colliding_entities in &query {
         for e in colliding_entities.0.iter() {
             if let Ok(t) = transforms.get(*e) {
                 if velocities.get(*e).is_ok_and(|a| a.length() >= 1.0) {
