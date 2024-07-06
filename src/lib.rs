@@ -87,7 +87,7 @@ fn hand_collider(
     for (entity, radius) in &query {
         commands
             .entity(entity)
-            .insert((Collider::sphere(radius.0), RigidBody::Static, ColliderDensity(10.0)));
+            .insert((Collider::sphere(radius.0), RigidBody::Kinematic, ColliderDensity(10.0)));
     }
 }
 
