@@ -16,3 +16,8 @@ x devices
 # Run on this device
 x run --release --device adb:***
 ```
+
+If you have issues with blake3 ( this is common ) build with this
+```
+CARGO_FEATURE_PURE=1 x run --release --device adb:***
+```
