@@ -1,12 +1,12 @@
 //! A simple 3D scene with light shining over a cube sitting on a plane
 
 use crate::cube_creation::CubeCreationPlugin;
+use avian3d::prelude::*;
 use bevy::audio::{PlaybackMode, Volume};
 use bevy::prelude::*;
 use bevy_embedded_assets::EmbeddedAssetPlugin;
-use bevy_mod_openxr::{add_xr_plugins, init::OxrInitPlugin, types::OxrExtensions};
-use avian3d::prelude::*;
 use bevy_mod_openxr::session::OxrSession;
+use bevy_mod_openxr::{add_xr_plugins, init::OxrInitPlugin, types::OxrExtensions};
 use bevy_mod_xr::hands::HandBoneRadius;
 
 pub mod cube_creation;
@@ -18,7 +18,7 @@ pub fn main() {
         app_info: default(),
         exts: {
             let mut exts = OxrExtensions::default();
-            exts.enable_fb_passthrough();
+            // exts.enable_fb_passthrough();
             exts.enable_hand_tracking();
             //exts.enable_custom_refresh_rates();
             exts
@@ -37,6 +37,7 @@ pub fn main() {
     .add_plugins((
         EmbeddedAssetPlugin::default(),
         PhysicsPlugins::default(),
+        // PhysicsDebugPlugin::default(),
         bevy_xr_utils::hand_gizmos::HandGizmosPlugin,
     ))
     // Setup
@@ -47,7 +48,7 @@ pub fn main() {
         brightness: 500.0,
     })
     .insert_resource(Msaa::Off)
-    .insert_resource(ClearColor(Color::NONE))
+    // .insert_resource(ClearColor(Color::NONE))
     .run();
 }
 
@@ -76,20 +77,42 @@ pub struct CustomPhysicsIntegrations;
 impl Plugin for CustomPhysicsIntegrations {
     fn build(&self, app: &mut App) {
         app.add_systems(Update, hand_collider);
+        app.add_systems(Update, update_coliders);
         app.add_systems(Update, play_sound_when_colliding);
     }
 }
 
 fn hand_collider(
-    query: Query<(Entity, &HandBoneRadius), Without<Collider>>,
+    query: Query<(Entity, &HandBoneRadius), Without<HandBoneColider>>,
     mut commands: Commands,
 ) {
     for (entity, radius) in &query {
-        commands
-            .entity(entity)
-            .insert((Collider::sphere(radius.0), RigidBody::Kinematic, ColliderDensity(10.0)));
+        let col = commands
+            .spawn((
+                Collider::sphere(radius.0),
+                RigidBody::Dynamic,
+                ColliderDensity(1.0),
+                SpatialBundle::default(),
+                GravityScale(0.0),
+            ))
+            .id();
+        commands.entity(entity).insert(HandBoneColider(col));
     }
 }
+fn update_coliders(
+    hand_query: Query<(&GlobalTransform, &HandBoneColider)>,
+    mut col_query: Query<(&GlobalTransform, &mut LinearVelocity)>,
+    time: Res<Time>,
+) {
+    for (hand_transform, col) in &hand_query {
+        let (col_transform, mut vel) = col_query.get_mut(col.0).unwrap();
+        let diff = hand_transform.translation() - col_transform.translation();
+        **vel = diff / time.delta_seconds();
+    }
+}
+
+#[derive(Component, Clone, Copy)]
+pub struct HandBoneColider(Entity);
 
 fn play_sound_when_colliding(
     query: Query<&CollidingEntities>,
