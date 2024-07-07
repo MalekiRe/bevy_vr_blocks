@@ -18,7 +18,7 @@ pub fn main() {
         app_info: default(),
         exts: {
             let mut exts = OxrExtensions::default();
-            exts.enable_fb_passthrough();
+            // exts.enable_fb_passthrough();
             exts.enable_hand_tracking();
             //exts.enable_custom_refresh_rates();
             exts
@@ -37,7 +37,7 @@ pub fn main() {
     .add_plugins((
         EmbeddedAssetPlugin::default(),
         PhysicsPlugins::default(),
-        PhysicsDebugPlugin::default(),
+        // PhysicsDebugPlugin::default(),
         bevy_xr_utils::hand_gizmos::HandGizmosPlugin,
     ))
     // Setup
@@ -48,7 +48,7 @@ pub fn main() {
         brightness: 500.0,
     })
     .insert_resource(Msaa::Off)
-    .insert_resource(ClearColor(Color::NONE))
+    // .insert_resource(ClearColor(Color::NONE))
     .run();
 }
 
@@ -90,9 +90,10 @@ fn hand_collider(
         let col = commands
             .spawn((
                 Collider::sphere(radius.0),
-                RigidBody::Kinematic,
-                ColliderDensity(10.0),
+                RigidBody::Dynamic,
+                ColliderDensity(1.0),
                 SpatialBundle::default(),
+                GravityScale(0.0),
             ))
             .id();
         commands.entity(entity).insert(HandBoneColider(col));
