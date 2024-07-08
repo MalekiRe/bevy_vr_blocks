@@ -8,7 +8,9 @@ very important here.
 ```sh
 cargo install --git https://github.com/rust-mobile/xbuild
 ```
-
+DID YOU INSTALL IT FROM GIT? IF NOT GO BACK AND INSTALL
+IT WITH --git DO IT. DO IT NOW. IT WILL NOT WORK IF YOU HAD IT 
+PREVIOUSLY INSTALLED.
 ```sh 
 # List devices and copy device string "adb:***"
 x devices
